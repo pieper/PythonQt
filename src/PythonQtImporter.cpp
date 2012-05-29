@@ -631,7 +631,12 @@ PythonQtImport::getCodeFromData(const QString& path, int isbytecode,int /*ispack
       // save a pyc file if possible
       QDateTime time;
       time = PythonQt::importInterface()->lastModifiedDate(path);
-      writeCompiledModule((PyCodeObject*)code, path+"c", time.toTime_t());
+      // Workaround for python release build and pythonqt debug build:
+      //  if this line is not commented out, you get a crash.
+      //  But since saving the .pyc file is a performance optimization
+      //  only it is okay to comment this out.
+      // TODO: can the build type of python be checked with a define?
+      //writeCompiledModule((PyCodeObject*)code, path+"c", time.toTime_t());
     }
   }
   return code;
