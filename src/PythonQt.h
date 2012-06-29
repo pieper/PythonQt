@@ -480,6 +480,8 @@ public:
   //! clear all NotFound entries on all class infos, to ensure that
   //! newly loaded wrappers can add methods even when the object was wrapped by PythonQt before the wrapper was loaded
   void clearNotFoundCachedMembers();
+  //! return \a True if \a handleError() has been called and an error occured.
+  bool errorOccured()const;
 
   //! set a callback that is called when a QObject with parent == NULL is wrapped by pythonqt
   void setQObjectWrappedCallback(PythonQtQObjectWrappedCB* cb);
@@ -707,6 +709,8 @@ private:
 
   int _initFlags;
   int _PythonQtObjectPtr_metaId;
+
+  bool _ErrorOccured;
 
   friend class PythonQt;
 };
