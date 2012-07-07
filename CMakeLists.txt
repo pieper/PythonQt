@@ -176,7 +176,7 @@ foreach(qtlib core gui network opengl sql svg uitools webkit xml xmlpatterns)
     
     set(file_prefix generated_cpp/com_trolltech_qt_${qtlib}/com_trolltech_qt_${qtlib})
     
-    foreach(index RANGE 0 10)
+    foreach(index RANGE 0 11)
     
       # Source files
       if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${file_prefix}${index}.cpp)
