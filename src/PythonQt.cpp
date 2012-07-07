@@ -55,6 +55,11 @@
 #include <pydebug.h>
 #include <vector>
 
+#ifdef PYTHONQT_USE_VTK
+# include <vtkPythonUtil.h>
+# include <vtkObject.h>
+#endif
+
 PythonQt* PythonQt::_self = NULL;
 int       PythonQt::_uniqueModuleCount = 0;
 
@@ -468,6 +473,13 @@ PyObject* PythonQtPrivate::wrapPtr(void* ptr, const QByteArray& name)
     } else {
       wrap = createNewPythonQtInstanceWrapper(wrapper, info, ptr);
     }
+#ifdef PYTHONQT_USE_VTK
+    if (name.startsWith("vtk"))
+      {
+      vtkObject * _vtkObj = reinterpret_cast<vtkObject*>(ptr);
+      return vtkPythonUtil::GetObjectFromPointer(_vtkObj);
+      }
+#endif
     //          mlabDebugConst("MLABPython","new c++ wrapper added " << wrap->_wrappedPtr << " " << wrap->_obj->className() << " " << wrap->classInfo()->wrappedClassName().latin1());
   } else {
     Py_INCREF(wrap);

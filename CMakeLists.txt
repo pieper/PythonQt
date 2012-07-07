@@ -38,6 +38,20 @@ include_directories("${PYTHON_INCLUDE_DIR}")
 add_definitions(-DPYTHONQT_USE_RELEASE_PYTHON_FALLBACK)
 
 #-----------------------------------------------------------------------------
+# VTK
+
+option(PythonQt_USE_VTK "Automatically wrap/unwrap VTK based object" OFF)
+set(VTK_LIBRARIES)
+if(PythonQt_USE_VTK)
+  find_package(VTK REQUIRED)
+  include(${VTK_USE_FILE})
+  add_definitions(-DPYTHONQT_USE_VTK)
+  set(VTK_LIBRARIES vtkPythonCore)
+else()
+  remove_definitions(-DPYTHONQT_USE_VTK)
+endif()
+
+#-----------------------------------------------------------------------------
 # Build options
 
 foreach(qtlib core gui network opengl sql svg uitools webkit xml xmlpatterns)
@@ -208,7 +222,9 @@ add_library(PythonQt SHARED
             ${gen_ui_sources}
             ${gen_qrc_sources}
   )
-set_target_properties(PythonQt PROPERTIES DEFINE_SYMBOL PYTHONQT_EXPORTS)
+
+# from svn head - needed?
+#set_target_properties(PythonQt PROPERTIES DEFINE_SYMBOL PYTHONQT_EXPORTS)
 
 #
 # That should solve linkage error on Mac when the project is used in a superbuild setup
@@ -221,6 +237,7 @@ set_target_properties(PythonQt  PROPERTIES
 target_link_libraries(PythonQt
               ${PYTHON_LIBRARY}
               ${QT_LIBRARIES}
+              ${VTK_LIBRARIES}
   )
 
 #-----------------------------------------------------------------------------

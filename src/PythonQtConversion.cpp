@@ -45,6 +45,11 @@
 #include <QTime>
 #include <QDate>
 
+#ifdef PYTHONQT_USE_VTK
+# include <vtkPythonUtil.h>
+# include <vtkObject.h>
+#endif
+
 PythonQtValueStorage<qint64, 128>  PythonQtConv::global_valueStorage;
 PythonQtValueStorage<void*, 128>   PythonQtConv::global_ptrStorage;
 PythonQtValueStorageWithCleanup<QVariant, 128> PythonQtConv::global_variantStorage;
@@ -407,7 +412,16 @@ void* PythonQtConv::ConvertPythonToQt(const PythonQtMethodInfo::ParameterInfo& i
      } else if (info.name == "PyObject") {
        // handle low level PyObject directly
        PythonQtValueStorage_ADD_VALUE_IF_NEEDED(alreadyAllocatedCPPObject,global_ptrStorage, void*, obj, ptr);
-     } else if (obj == Py_None) {
+     }
+#ifdef PYTHONQT_USE_VTK
+     else if (info.name.startsWith("vtk")) {
+       vtkObjectBase * vtkObj = vtkPythonUtil::GetPointerFromObject(obj, info.name.data());
+       if (vtkObj) {
+         PythonQtValueStorage_ADD_VALUE_IF_NEEDED(alreadyAllocatedCPPObject,global_ptrStorage, void*, vtkObj, ptr);
+       }
+     }
+#endif
+     else if (obj == Py_None) {
        // None is treated as a NULL ptr
        PythonQtValueStorage_ADD_VALUE_IF_NEEDED(alreadyAllocatedCPPObject,global_ptrStorage, void*, NULL, ptr);
      } else {
