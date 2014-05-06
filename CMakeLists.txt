@@ -24,6 +24,7 @@ if (PythonQt_QT_VERSION VERSION_LESS "5")
   foreach(qtlib ${qtlibs})
     string(TOLOWER ${qtlib} qtlib_lower)
     list(APPEND qtlibs_lower ${qtlib_lower})
+  endforeach()
   set(qtlibs ${qtlibs_lower})
 endif()
 
@@ -50,6 +51,16 @@ if(PythonQt_DEBUG)
   add_definitions(-DPYTHONQT_DEBUG)
 else()
   remove_definitions(-DPYTHONQT_DEBUG)
+endif()
+
+#-----------------------------------------------------------------------------
+# Platform specific compile options
+
+if(MSVC)
+  # /bigobj is required for windows builds because of the size of
+  # some object files
+  set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj" )
+  set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj" )
 endif()
 
 #-----------------------------------------------------------------------------
